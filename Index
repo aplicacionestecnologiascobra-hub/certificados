@@ -1,107 +1,83 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Redirigiendo…</title>
-  <!-- CSP básica para GitHub Pages (ajústala según necesites) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://script.google.com; connect-src https://script.google.com; frame-ancestors 'none'">
-  <style>
-    :root { color-scheme: light dark; }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      min-height: 100svh;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      background: #0b0b0b url("https://drive.google.com/uc?export=view&id=1C-RsonLET6RTOWK1xNScwQmAQDW3qCLL") center center / cover no-repeat fixed;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  <meta charset="utf-8">
+  <title></title>
+<style>
+  body {
+    background: url = "https://drive.google.com/file/d/1VcmhIxljK5qu4E026Yw5Q6GV2pEKVmmT/view?usp=sharing" center center fixed;
+    background-size: cover;
+    text-align: center;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid #fff;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #fff transparent transparent transparent;
+  }
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
     }
-
-    .wrap { backdrop-filter: blur(1.5px); padding: 24px; border-radius: 16px; }
-
-    .lds-ring { display: inline-block; position: relative; width: 80px; height: 80px; }
-    .lds-ring div {
-      box-sizing: border-box; display: block; position: absolute; width: 64px; height: 64px; margin: 8px;
-      border: 8px solid #fff; border-radius: 50%;
-      animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-      border-color: #fff transparent transparent transparent;
+    100% {
+      transform: rotate(360deg);
     }
-    .lds-ring div:nth-child(1) { animation-delay: -0.45s; }
-    .lds-ring div:nth-child(2) { animation-delay: -0.3s; }
-    .lds-ring div:nth-child(3) { animation-delay: -0.15s; }
-    @keyframes lds-ring { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  }
+</style>
 
-    #msg { margin-top: 12px; font-size: 0.95rem; color: #fff; }
-    a { color: #fff; }
-  </style>
 </head>
 <body>
-  <div class="wrap" role="status" aria-live="polite" aria-busy="true">
-    <div class="lds-ring" aria-hidden="true"><div></div><div></div><div></div><div></div></div>
-    <div id="msg">Redirigiendo…</div>
-  </div>
-
-  <noscript>
-    <p style="color:#fff">Este sitio necesita JavaScript para redirigir. Abre
-      <a href="https://script.google.com/" rel="noopener noreferrer">el destino</a> manualmente.</p>
-  </noscript>
-
   <script>
-    (function () {
-      'use strict';
-      const AS_URL_BASE = 'https://script.google.com/macros/s/AKfycbycEZfKzhqqiX2Od1MpMdcNEY76Cb5gP68QvToncEfmpbUGrs1zrkzkBRtxP-RL9rbADA/exec';
-      const $msg = document.getElementById('msg');
-
-      const params = new URLSearchParams(window.location.search);
-      const k = params.get('k');
-      if (!k) {
-        $msg.textContent = 'Falta el parámetro "k" en la URL.';
-        document.querySelector('.wrap').setAttribute('aria-busy', 'false');
-        return;
-      }
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 s
-
-      (async () => {
-        try {
-          const res = await fetch(`${AS_URL_BASE}?k=${encodeURIComponent(k)}`, {
-            signal: controller.signal,
-            redirect: 'manual',
-            headers: { 'Accept': 'text/plain' }
-          });
-
-          const text = (await res.text()).trim();
-          if (!text) throw new Error('Respuesta vacía del servicio.');
-
-          // Validación básica del destino (evita open-redirects peligrosos)
-          const dest = new URL(text, window.location.origin);
-          if (!/^https?:$/.test(dest.protocol)) throw new Error('Protocolo no permitido.');
-
-          // Si quieres restringir dominios, descomenta y ajusta:
-          // const allowedHosts = new Set(['tudominio.com', 'otro-destino.cl']);
-          // if (!allowedHosts.has(dest.hostname)) throw new Error('Host no permitido.');
-
-          // Redirección segura
-          window.location.replace(dest.href);
-        } catch (err) {
-          console.error(err);
-          $msg.innerHTML = 'No se pudo completar la redirección. Puedes intentar abrir el destino directamente: ';
-          const a = document.createElement('a');
-          a.href = `${AS_URL_BASE}?k=${encodeURIComponent(k)}`;
-          a.rel = 'noopener noreferrer';
-          a.textContent = 'Abrir destino';
-          $msg.appendChild(a);
-        } finally {
-          clearTimeout(timeoutId);
-          document.querySelector('.wrap').setAttribute('aria-busy', 'false');
+    const AS_URL_BASE = "https://script.google.com/macros/s/AKfycbycEZfKzhqqiX2Od1MpMdcNEY76Cb5gP68QvToncEfmpbUGrs1zrkzkBRtxP-RL9rbADA/exec";
+    
+    var url = document.location.href;
+    var k = url.substr(url.lastIndexOf("k=")+2);
+    
+    if(k){
+      fetch(AS_URL_BASE+'?k='+k)
+      .then(r => r.text())
+      .then((r) => {
+        console.log(r);
+        //document.write(r);
+        if(r){
+          document.location.replace(r);
         }
-      })();
-    })();
+      })
+      .catch(err => console.log(err))
+    }
+
   </script>
+  
+  <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+  
+  
 </body>
 </html>
